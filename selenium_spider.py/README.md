@@ -28,4 +28,3 @@ CONFIGURAR MAQUINA COM AS SEGUINTES BIBLIOTECAS EM UMA MAQUINA VIRTUAL(VIRTUAL E
 
 O que fazer:
     -Tratar de possíveis erros(HTTPS//HostConection//Captcha//Failed).
-    -Colocar formatação da string do PDF em somente uma variavel.

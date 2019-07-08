@@ -58,8 +58,9 @@ class Main:
         exit_send_input = True
         while exit_send_input:
             try:#FUNC_2 // #Coloca valor '2015' na box
+                send_input = "/html[1]/body[1]/form[1]/table[1]/tbody[1]/tr[3]/td[1]/table[1]/tbody[1]/tr[1]/td[1]/table[1]/tbody[1]/tr[2]/td[1]/table[1]/tbody[1]/tr[4]/td[2]/table[1]/tbody[1]/tr[1]/td[3]/input[1]"
                 year_id = WebDriverWait(self.__driver, 10).until(
-                    EC.visibility_of_element_located((By.XPATH, "/html[1]/body[1]/form[1]/table[1]/tbody[1]/tr[3]/td[1]/table[1]/tbody[1]/tr[1]/td[1]/table[1]/tbody[1]/tr[2]/td[1]/table[1]/tbody[1]/tr[4]/td[2]/table[1]/tbody[1]/tr[1]/td[3]/input[1]"))
+                    EC.visibility_of_element_located((By.XPATH, send_input))
                 )
                 exit_send_input = False
             except Exception as error:
@@ -72,7 +73,8 @@ class Main:
     def down_img(self): #Função responsavel para o download da imagem do captcha
         
         try:#FUNC_3 // #Trás URL do  captcha gerado 
-            div_captcha = self.__driver.find_element_by_xpath("/html[1]/body[1]/form[1]/table[1]/tbody[1]/tr[3]/td[1]/table[1]/tbody[1]/tr[1]/td[1]/table[1]/tbody[1]/tr[5]/td[1]/table[1]/tbody[1]/tr[1]/td[2]/div[1]/div[1]/img[1]")
+            url_cap = "/html[1]/body[1]/form[1]/table[1]/tbody[1]/tr[3]/td[1]/table[1]/tbody[1]/tr[1]/td[1]/table[1]/tbody[1]/tr[5]/td[1]/table[1]/tbody[1]/tr[1]/td[2]/div[1]/div[1]/img[1]"
+            div_captcha = self.__driver.find_element_by_xpath(url_cap)
             img_url = div_captcha.get_attribute('src')
             
             print('Iniciando download (CAPTCHA) !')
@@ -133,16 +135,18 @@ class Main:
             #Caso der erro no OCR, executa esta função até passar
             while not (span_one_txt == False):
                 try:#FUNC_7 // #Limpa Span
+                    clear_span = "/html[1]/body[1]/form[1]/table[1]/tbody[1]/tr[3]/td[1]/table[1]/tbody[1]/tr[1]/td[1]/table[1]/tbody[1]/tr[7]/td[1]/table[1]/tbody[1]/tr[1]/td[2]/input[1]"
                     click_buttom_clear = WebDriverWait(self.__driver, 10).until(
-                    EC.presence_of_element_located((By.XPATH, "/html[1]/body[1]/form[1]/table[1]/tbody[1]/tr[3]/td[1]/table[1]/tbody[1]/tr[1]/td[1]/table[1]/tbody[1]/tr[7]/td[1]/table[1]/tbody[1]/tr[1]/td[2]/input[1]"))
+                    EC.presence_of_element_located((By.XPATH, clear_span))
                     )
                 except Exception as error:
                     print(error, "FUNC_7")
                 click_buttom_clear.click()
                             
                 try:#FUNC_8 // #Clica no botão nova imagem
+                    buttom_new = "/html[1]/body[1]/form[1]/table[1]/tbody[1]/tr[3]/td[1]/table[1]/tbody[1]/tr[1]/td[1]/table[1]/tbody[1]/tr[5]/td[1]/table[1]/tbody[1]/tr[1]/td[2]/div[1]/div[1]/a[1]"
                     click_buttom_new_img = WebDriverWait(self.__driver, 10).until(
-                    EC.presence_of_element_located((By.XPATH, "/html[1]/body[1]/form[1]/table[1]/tbody[1]/tr[3]/td[1]/table[1]/tbody[1]/tr[1]/td[1]/table[1]/tbody[1]/tr[5]/td[1]/table[1]/tbody[1]/tr[1]/td[2]/div[1]/div[1]/a[1]"))
+                    EC.presence_of_element_located((By.XPATH, buttom_new))
                     )
                 except Exception as error:
                     print(error, "FUNC_8")
@@ -213,10 +217,14 @@ class Main:
                 pdf = pdftotext.PDF(f)
 
             for page in pdf:
+                string_line_one = page.split('\n')[1]#Entidade Devedora
+                string_line_two = page.split('\n')[2]#Noda da/o Entidade Devedora
                 string_line_tree = page.split('\n')[3] #Credor Principal
                 string_line_four = page.split('\n')[4] #Número e Ano do EP
                 string_line_six = page.split('\n')[6] #Número do Processo Originário
                 string_line_seven = page.split('\n')[7] #Ordem Cronológica/Ano
+                # print(string_line_one)
+                # sprint(string_line_two)
                 print(string_line_tree)
                 print(string_line_four)
                 print(string_line_six)
@@ -224,7 +232,7 @@ class Main:
                 print()                            
         except Exception as error:
             print(error)
-            
+                
         os.remove(pdf_file)
                     
 try:#FUNC_14
