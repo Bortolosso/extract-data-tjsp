@@ -162,7 +162,7 @@ class Main:
         
         if response != 200:
             time.sleep(0.2)
-            try:
+            try:#FUNC_9
                 rows = WebDriverWait(self.__driver, 10).until(
                     EC.presence_of_all_elements_located((By.XPATH, "//table[@id='Grid1ContainerTbl']/tbody[1]/tr[*]"))
                 )
@@ -176,7 +176,7 @@ class Main:
                         self.__cols_table = self.__driver.find_element_by_xpath(table_xpath)
                         
                         for x in range(len(cols)):
-                            # time.sleep(0.4)
+                            time.sleep(0.4)
                             if x == 0:
                                 continue 
                             try:#FUNC_11 // #Função responsavel abrir PDF Viewer e fecha-lo, reduzindo o consumo de memoria volatil
@@ -188,51 +188,44 @@ class Main:
                                 self.__driver.switch_to_window(window_after)
                                 self.__driver.close()
                                 self.__driver.switch_to_window(window_before)
+                                self.extract_pdf()
                             except:
                                 pass
+        
                     except Exception as error:
                         print(error)
-
-                buttom = WebDriverWait(self.__driver, 10).until(EC.presence_of_element_located((By.ID, "PagingButtonsNext"))) 
-                
-                self.extract_pdf()   
-
-            except: 
-                pass
-        
+                        
+                time.sleep(0.5)
+                buttom = self.__driver.find_element_by_class_name('PagingButtonsNext')
+                buttom.click()    
+            except Exception as error:
+                print(error, "FUNC_9")
         else:
             self.__driver.quit()
             return Main()
         
     def extract_pdf(self):
-        pdf_file= ("/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/temp/pdf/arelpesquisainternetprecatorio (1).pdf")
+        
+        pdf_file= ("/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/temp/pdf/arelpesquisainternetprecatorio.pdf")
             
-        for pdfs in range(1, len(pdf_file) + 1):
-            all_pdfs = ("/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/temp/pdf/arelpesquisainternetprecatorio (%s).pdf" % (int(pdfs)))
+        try:
+            with open(pdf_file, "rb") as f:
+                pdf = pdftotext.PDF(f)
+
+            for page in pdf:
+                string_line_tree = page.split('\n')[3] #Credor Principal
+                string_line_four = page.split('\n')[4] #Número e Ano do EP
+                string_line_six = page.split('\n')[6] #Número do Processo Originário
+                string_line_seven = page.split('\n')[7] #Ordem Cronológica/Ano
+                print(string_line_tree)
+                print(string_line_four)
+                print(string_line_six)
+                print(string_line_seven)
+                print()                            
+        except Exception as error:
+            print(error)
             
-            try:
-                with open(all_pdfs, "rb") as f:
-                    pdf = pdftotext.PDF(f)
-
-                for page in pdf:
-                    string_line_tree = page.split('\n')[3] #Credor Principal
-                    string_line_four = page.split('\n')[4] #Número e Ano do EP
-                    string_line_six = page.split('\n')[6] #Número do Processo Originário
-                    string_line_seven = page.split('\n')[7] #Ordem Cronológica/Ano
-                    print(string_line_tree)
-                    print(string_line_four)
-                    print(string_line_six)
-                    print(string_line_seven)
-                    print()                            
-            except Exception as error:
-                print(error)
-
-        for delete_pdfs in range(1, len(pdf_file) + 1):
-            time.sleep(1)
-            all_pdfs = ("/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/temp/pdf/arelpesquisainternetprecatorio (%s).pdf" % (int(delete_pdfs)))
-            os.remove(all_pdfs)
-
-        self.web_scraping()
+        os.remove(pdf_file)
                     
 try:#FUNC_14
     Main()
