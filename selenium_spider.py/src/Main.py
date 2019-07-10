@@ -20,6 +20,8 @@ import requests
 import pdftotext
 import re
 import os
+import os.path
+import sys
 
 class Main:
         
@@ -36,10 +38,37 @@ class Main:
         "download.directory_upgrade": True,
         "plugins.always_open_pdf_externally": True, #Não mostrará PDF diretamente no chrome
         })
-    
+        
         self.__driver = webdriver.Chrome( options=options, executable_path = local_dir_driver)
-        self.__driver.get(url_tjsp)   
+        self.__driver.get(url_tjsp)
+        
+        print()#Pula linha no terminal
+        print ("Iniciando script . . .")
+        animation = ("|/-\\")
 
+        for i in range(20):
+            time.sleep(0.1)
+            sys.stdout.write("\r" + animation[i % len(animation)])
+            sys.stdout.flush()
+        print()#Pula linha no terminal
+        print("Script iniciado . . .")
+
+        try: #Checa se tem algum PDF da rodagem passada deixado na pasta.
+            file_path = ('/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/temp/pdf/arelpesquisainternetprecatorio.pdf')
+            bool = os.path.exists(file_path)
+            if bool == True:   
+                print()#Pula linha no terminal    
+                print('Excluindo PDF !')
+                os.remove(file_path)
+                print('PDF excluido !')
+                print()#Pula linha no terminal
+            else:        
+                print()#Pula linha no terminal
+                print("Não há PDF para ser exluido !")
+                print()#Pula linha no terminal
+        except:
+            pass    
+            
         self.join_tjsp()
         
     def join_tjsp(self):#Função responsavel para entrar no site do TJSP
@@ -55,6 +84,8 @@ class Main:
                 print(error, "FUNC_1")
         buttom_join.click()
         
+        send_year = input('Digite o ano desejado para coletar os dados: ')
+        time.sleep(0.2)
         exit_send_input = True
         while exit_send_input:
             try:#FUNC_2 // #Coloca valor '2015' na box
@@ -66,7 +97,8 @@ class Main:
             except Exception as error:
                 print(error, "FUNC_2")
         time.sleep(0.5)        
-        year_id.send_keys('2015')
+        year_id.send_keys(send_year)
+        print()#Pula linha no terminal
                         
         self.down_img()
   
@@ -99,9 +131,9 @@ class Main:
         self.__text = ocr.image_to_string(gray, lang = 'eng')
         os.remove(filename)        
         
-        self.join()
+        self.join_table()
     
-    def join(self):  
+    def join_table(self):  
         
         exit_send_key = True
         while exit_send_key:#Coloca a string processada pelo OCR no input de captcha
@@ -130,7 +162,9 @@ class Main:
             EC.presence_of_element_located((By.XPATH, "//span[contains(text(),'Código digitado incorretamente!')]"))
         )
             span_one_txt = span_one.get_attribute('align')
+            print()#Pula linha no terminal
             print("ERRO: INVALID OCR")
+            print()#Pula linha no terminal
             
             #Caso der erro no OCR, executa esta função até passar
             while not (span_one_txt == False):
@@ -165,6 +199,8 @@ class Main:
         response = requests.get(url)
         
         if response != 200:
+            print()#Pula linha no terminal
+            print("Inicinado download dos PDF's !")
             time.sleep(0.2)
             try:#FUNC_9
                 rows = WebDriverWait(self.__driver, 10).until(
@@ -208,6 +244,8 @@ class Main:
             self.__driver.quit()
             return Main()
         
+        print()#Pula linha no terminal
+        print("Fim da extração de dados dos PDF's !")
     def extract_pdf(self):
         
         pdf_file= ("/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/temp/pdf/arelpesquisainternetprecatorio.pdf")
@@ -229,7 +267,7 @@ class Main:
                 print(string_line_four)
                 print(string_line_six)
                 print(string_line_seven)
-                print()                            
+                print()#Pula linha no terminal                            
         except Exception as error:
             print(error)
                 

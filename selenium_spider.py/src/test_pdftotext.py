@@ -18,11 +18,9 @@ class Extract:
             for pdfs in range(1, len(pdf_file) + 1):
                 if pdfs < 5:
                     all_pdfs = ("/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/temp/pdf/arelpesquisainternetprecatorio (%s).pdf" % (int(pdfs)))
-                    
                     try:
                         with open(all_pdfs, "rb") as f:
                             pdf = pdftotext.PDF(f)
-
                         for page in pdf:
                             string_line_tree = page.split('\n')[3] #Credor Principal
                             string_line_four = page.split('\n')[4] #Número e Ano do EP
