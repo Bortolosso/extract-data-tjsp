@@ -213,7 +213,7 @@ class Main:
                         table_xpath = "//table[@id='Grid1ContainerTbl']/tbody[1]/tr[%s]/td[*]/input[1]" % (int(i))
 
                         cols = self.__driver.find_elements_by_xpath(row_xpath)
-                        self.__cols_table = self.__driver.find_element_by_xpath(table_xpath)
+                        cols_table = self.__driver.find_element_by_xpath(table_xpath)
                         
                         for x in range(len(cols)):
                             time.sleep(0.4)
@@ -223,7 +223,7 @@ class Main:
                                 str_scrap = cols[x].text.encode('utf-8') #Armazena todos os dados varrido na table no site do TJSP          
                                 # print(str_scrap)
                                 window_before = self.__driver.window_handles[0]
-                                self.__cols_table.click()
+                                cols_table.click()
                                 window_after = self.__driver.window_handles[1]
                                 self.__driver.switch_to_window(window_after)
                                 self.__driver.close()
@@ -261,12 +261,14 @@ class Main:
                 string_line_four = page.split('\n')[4] #Número e Ano do EP
                 string_line_six = page.split('\n')[6] #Número do Processo Originário
                 string_line_seven = page.split('\n')[7] #Ordem Cronológica/Ano
-                # print(string_line_one)
-                # sprint(string_line_two)
+                print()#Pula linha no terminal
+                print(string_line_one)
+                print(string_line_two)
                 print(string_line_tree)
                 print(string_line_four)
                 print(string_line_six)
                 print(string_line_seven)
+                print()#Pula linha no terminal
                 print()#Pula linha no terminal                            
         except Exception as error:
             print(error)
