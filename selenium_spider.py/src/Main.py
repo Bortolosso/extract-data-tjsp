@@ -26,6 +26,21 @@ import sys
 class Main:
         
     def __init__(self):
+                
+        print()#Pula linha no terminal
+        print ("Iniciando script . . .")
+        animation = ("|/-\\")
+
+        for i in range(20):
+            time.sleep(0.1)
+            sys.stdout.write("\r" + animation[i % len(animation)])
+            sys.stdout.flush()
+        print()#Pula linha no terminal
+        print("Script iniciado . . .")
+        
+        self.driver()
+
+    def driver(self):
         
         local_dir_pdf = "/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/temp/pdf"
         local_dir_driver = "/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/driver/chromedriver75"
@@ -42,16 +57,9 @@ class Main:
         self.__driver = webdriver.Chrome( options=options, executable_path = local_dir_driver)
         self.__driver.get(url_tjsp)
         
-        print()#Pula linha no terminal
-        print ("Iniciando script . . .")
-        animation = ("|/-\\")
-
-        for i in range(20):
-            time.sleep(0.1)
-            sys.stdout.write("\r" + animation[i % len(animation)])
-            sys.stdout.flush()
-        print()#Pula linha no terminal
-        print("Script iniciado . . .")
+        self.remove_pdf()
+        
+    def remove_pdf(self):
 
         try: #Checa se tem algum PDF da rodagem passada deixado na pasta.
             file_path = ('/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/temp/pdf/arelpesquisainternetprecatorio.pdf')
@@ -111,7 +119,7 @@ class Main:
             
             print('Iniciando download (CAPTCHA) !')
             r = requests.get(img_url)
-            self.__img = '/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/img_captcha.jpg'
+            self.__img = '/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/temp/img_captcha/img_captcha.jpg'
             with open(self.__img, 'wb') as out_file:
                 out_file.write(r.content)
             print('Download completo (CAPTCHA) !')
@@ -255,12 +263,13 @@ class Main:
                 pdf = pdftotext.PDF(f)
 
             for page in pdf:
-                string_line_one = page.split('\n')[1]#Entidade Devedora
-                string_line_two = page.split('\n')[2]#Noda da/o Entidade Devedora
-                string_line_tree = page.split('\n')[3] #Credor Principal
-                string_line_four = page.split('\n')[4] #Número e Ano do EP
-                string_line_six = page.split('\n')[6] #Número do Processo Originário
-                string_line_seven = page.split('\n')[7] #Ordem Cronológica/Ano
+                page_split = page.split('\n')
+                string_line_one = page_split[1]#Entidade Devedora
+                string_line_two = page_split[2]#Noda da/o Entidade Devedora
+                string_line_tree = page_split[3] #Credor Principal
+                string_line_four = page_split[4] #Número e Ano do EP
+                string_line_six = page_split[6] #Número do Processo Originário
+                string_line_seven = page_split[7] #Ordem Cronológica/Ano
                 print()#Pula linha no terminal
                 print(string_line_one)
                 print(string_line_two)

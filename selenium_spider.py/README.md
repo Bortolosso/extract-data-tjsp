@@ -24,7 +24,3 @@ CONFIGURAR MAQUINA COM AS SEGUINTES BIBLIOTECAS EM UMA MAQUINA VIRTUAL(VIRTUAL E
     tesseract     0.1.3    
     urllib3       1.25.3   
     wheel         0.33.4   
-
-
-O que fazer:
-    -Tratar de possíveis erros(HTTPS//HostConection//Captcha//Failed).
