@@ -1,17 +1,10 @@
 # coding: utf-8
 
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.keys import Keys
-
-import selenium.webdriver as webdriver
-import selenium.webdriver.support.ui as ui
 
 class Driver(object):
     
-    def init_driver(self):
+    def __init__(self):
         
         local_dir_pdf = "/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/temp/pdf"
         local_dir_driver = "/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/driver/chromedriver75"
@@ -26,6 +19,5 @@ class Driver(object):
         })
         
         self.__driver = webdriver.Chrome( options=options, executable_path = local_dir_driver)
-        self.__driver.get(url_tjsp)
-        
+        self.__driver.get(url_tjsp) 
          

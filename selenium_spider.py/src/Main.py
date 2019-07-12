@@ -1,27 +1,27 @@
 #!/usr/bin/python -tt
 # coding: utf-8
 
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium import webdriver
+
 from PIL import Image, ImageOps, ImageEnhance
 from time import sleep
 
-import selenium.webdriver as webdriver
 import selenium.webdriver.support.ui as ui
+import selenium.webdriver as webdriver
+
 import pytesseract as ocr
 import numpy as np
-import argparse
-import cv2
-import time 
-import requests
 import pdftotext
+import argparse
+import requests
+import time 
+import sys
+import cv2
 import re
 import os
-import os.path
-import sys
 
 class Main:
         
@@ -39,7 +39,7 @@ class Main:
         print("Script iniciado . . .")
         
         self.driver()
-
+        
     def driver(self):
         
         local_dir_pdf = "/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/temp/pdf"
@@ -97,7 +97,8 @@ class Main:
         exit_send_input = True
         while exit_send_input:
             try:#FUNC_2 // #Coloca valor '2015' na box
-                send_input = "/html[1]/body[1]/form[1]/table[1]/tbody[1]/tr[3]/td[1]/table[1]/tbody[1]/tr[1]/td[1]/table[1]/tbody[1]/tr[2]/td[1]/table[1]/tbody[1]/tr[4]/td[2]/table[1]/tbody[1]/tr[1]/td[3]/input[1]"
+                xpath_iput = "/html[1]/body[1]/form[1]/table[1]/tbody[1]/tr[3]/td[1]/table[1]/tbody[1]/tr[1]/td[1]/table[1]/tbody[1]/tr[2]/td[1]/table[1]/tbody[1]/tr[4]/td[2]/table[1]/tbody[1]/tr[1]/td[3]/input[1]"
+                send_input = xpath_iput
                 year_id = WebDriverWait(self.__driver, 10).until(
                     EC.visibility_of_element_located((By.XPATH, send_input))
                 )
@@ -148,7 +149,7 @@ class Main:
             try:#FUNC_4
                 elem = WebDriverWait(self.__driver, 10).until(
                 EC.presence_of_element_located((By.NAME, 'cfield'))
-                )
+            )
                 exit_send_key = False
             except Exception as error:
                 print(error, "FUNC_4")
