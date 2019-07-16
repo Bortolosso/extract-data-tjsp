@@ -1,27 +1,28 @@
 #!/usr/bin/python -tt
 # coding: utf-8
 
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.common.by import By
-from selenium import webdriver
-
 from PIL import Image, ImageOps, ImageEnhance
 from time import sleep
 
-import selenium.webdriver.support.ui as ui
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
+
 import selenium.webdriver as webdriver
+import selenium.webdriver.support.ui as ui
 
 import pytesseract as ocr
 import numpy as np
-import pdftotext
 import argparse
-import requests
-import time 
-import sys
 import cv2
+import time 
+import requests
+import pdftotext
 import re
 import os
+import sys
 
 class Main:
         
@@ -29,6 +30,7 @@ class Main:
                 
         print()#Pula linha no terminal
         print ("Iniciando script . . .")
+        
         animation = ("|/-\\")
 
         for i in range(20):
@@ -39,7 +41,7 @@ class Main:
         print("Script iniciado . . .")
         
         self.driver()
-        
+
     def driver(self):
         
         local_dir_pdf = "/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/temp/pdf"
@@ -210,51 +212,49 @@ class Main:
         if response != 200:
             print()#Pula linha no terminal
             print("Inicinado download dos PDF's !")
-            time.sleep(0.2)
             try:#FUNC_9
                 rows = WebDriverWait(self.__driver, 10).until(
                     EC.presence_of_all_elements_located((By.XPATH, "//table[@id='Grid1ContainerTbl']/tbody[1]/tr[*]"))
                 )
                 for i in range(2, len(rows) + 1):
-                    time.sleep(0.5)
-                    try:#FUNC_10
-                        row_xpath = "//table[@id='Grid1ContainerTbl']/tbody[1]/tr[%s]/td[*]/span[1]" % (int(i))
-                        table_xpath = "//table[@id='Grid1ContainerTbl']/tbody[1]/tr[%s]/td[*]/input[1]" % (int(i))
+                    if i < 22:
+                        try:#FUNC_10
+                            row_xpath = "//table[@id='Grid1ContainerTbl']/tbody[1]/tr[%s]/td[*]/span[1]" % (int(i))
+                            table_xpath = "//table[@id='Grid1ContainerTbl']/tbody[1]/tr[%s]/td[*]/input[1]" % (int(i))
 
-                        cols = self.__driver.find_elements_by_xpath(row_xpath)
-                        cols_table = self.__driver.find_element_by_xpath(table_xpath)
-                        
-                        for x in range(len(cols)):
-                            time.sleep(0.4)
-                            if x == 0:
-                                continue 
-                            try:#FUNC_11 // #Função responsavel abrir PDF Viewer e fecha-lo, reduzindo o consumo de memoria volatil
-                                str_scrap = cols[x].text.encode('utf-8') #Armazena todos os dados varrido na table no site do TJSP          
-                                # print(str_scrap)
-                                window_before = self.__driver.window_handles[0]
-                                cols_table.click()
-                                window_after = self.__driver.window_handles[1]
-                                self.__driver.switch_to_window(window_after)
-                                self.__driver.close()
-                                self.__driver.switch_to_window(window_before)
-                                self.extract_pdf()
-                            except:
-                                pass
-        
-                    except Exception as error:
-                        print(error)
-                        
-                time.sleep(0.5)
-                buttom = self.__driver.find_element_by_class_name('PagingButtonsNext')
-                buttom.click()    
+                            cols = self.__driver.find_elements_by_xpath(row_xpath)
+                            cols_table = self.__driver.find_element_by_xpath(table_xpath)
+                            
+                            for x in range(len(cols)):
+                                time.sleep(0.3)
+                                if x == 0:
+                                    continue 
+                                try:#FUNC_11 // #Função responsavel abrir PDF Viewer e fecha-lo, reduzindo o consumo de memoria volatil
+                                    str_scrap = cols[x].text.encode('utf-8') #Armazena todos os dados varrido na table no site do TJSP          
+                                    # print(str_scrap)
+                                    window_before = self.__driver.window_handles[0]
+                                    cols_table.click()
+                                    window_after = self.__driver.window_handles[1]
+                                    self.__driver.switch_to_window(window_after)
+                                    self.__driver.close()
+                                    self.__driver.switch_to_window(window_before)
+                                    self.extract_pdf()
+                                except:
+                                    pass
+                        except Exception as error:
+                            print(error)
+                    else:
+                        buttom = self.__driver.find_element_by_xpath("//span[@class='PagingButtonsNext']")
+                        buttom.click() 
+                        self.web_scraping()
             except Exception as error:
                 print(error, "FUNC_9")
         else:
             self.__driver.quit()
             return Main()
-        
         print()#Pula linha no terminal
         print("Fim da extração de dados dos PDF's !")
+
     def extract_pdf(self):
         
         pdf_file= ("/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/temp/pdf/arelpesquisainternetprecatorio.pdf")
@@ -265,15 +265,11 @@ class Main:
 
             for page in pdf:
                 page_split = page.split('\n')
-                string_line_one = page_split[1]#Entidade Devedora
-                string_line_two = page_split[2]#Noda da/o Entidade Devedora
-                string_line_tree = page_split[3] #Credor Principal
-                string_line_four = page_split[4] #Número e Ano do EP
-                string_line_six = page_split[6] #Número do Processo Originário
-                string_line_seven = page_split[7] #Ordem Cronológica/Ano
+                string_line_tree = (page_split[3].strip()) #Credor Principal
+                string_line_four = (page_split[4].strip()) #Número e Ano do EP
+                string_line_six = (page_split[6].strip()) #Número do Processo Originário
+                string_line_seven = (page_split[7].strip()) #Ordem Cronológica/Ano
                 print()#Pula linha no terminal
-                print(string_line_one)
-                print(string_line_two)
                 print(string_line_tree)
                 print(string_line_four)
                 print(string_line_six)

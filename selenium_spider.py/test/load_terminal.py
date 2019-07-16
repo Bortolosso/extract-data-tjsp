@@ -1,3 +1,5 @@
+import time
+import sys
 
 class Test_script:
     def __init__(self):
@@ -6,8 +8,6 @@ class Test_script:
     
     
     def script_animation_one(self):
-        import time
-        import sys
         
         animation = ("|/-\\")
 
@@ -17,7 +17,6 @@ class Test_script:
             sys.stdout.flush()
         print ("End!")
     
-        
 try:
      Test_script()
 except:

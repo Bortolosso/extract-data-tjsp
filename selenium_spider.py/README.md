@@ -8,9 +8,6 @@ CONFIGURAR MAQUINA COM AS SEGUINTES BIBLIOTECAS EM UMA MAQUINA VIRTUAL(VIRTUAL E
     Package       Version  
     ------------ ---------
     argcomplete   1.10.0   
-    certifi       2019.6.16
-    chardet       3.0.4    
-    idna          2.8      
     numpy         1.16.4   
     opencv-python 4.1.0.25 
     pdftotext     2.1.1    
@@ -23,4 +20,3 @@ CONFIGURAR MAQUINA COM AS SEGUINTES BIBLIOTECAS EM UMA MAQUINA VIRTUAL(VIRTUAL E
     setuptools    41.0.1   
     tesseract     0.1.3    
     urllib3       1.25.3   
-    wheel         0.33.4   
