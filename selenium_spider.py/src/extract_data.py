@@ -1,44 +1,28 @@
 #!/usr/bin/python -tt
 # coding: utf-8
 
+from extract_pdf import Extract_pdf
+from remove_pdf import Remove_pdf 
+from load_terminal import Load_script
+
 from PIL import Image, ImageOps, ImageEnhance
-from time import sleep
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.keys import Keys
-
-import selenium.webdriver as webdriver
-import selenium.webdriver.support.ui as ui
 
 import pytesseract as ocr
-import numpy as np
-import argparse
 import cv2
 import time 
 import requests
-import pdftotext
-import re
 import os
-import sys
 
-class Main:
+class Extract_data_tjsp:
         
     def __init__(self):
                 
-        print()#Pula linha no terminal
-        print ("Iniciando script . . .")
-        
-        animation = ("|/-\\")
-
-        for i in range(20):
-            time.sleep(0.1)
-            sys.stdout.write("\r" + animation[i % len(animation)])
-            sys.stdout.flush()
-        print()#Pula linha no terminal
-        print("Script iniciado . . .")
+        L = Load_script()
         
         self.driver()
 
@@ -61,23 +45,9 @@ class Main:
         
         self.remove_pdf()
         
-    def remove_pdf(self):
+    def remove_pdf(self): 
 
-        try: #Checa se tem algum PDF da rodagem passada deixado na pasta.
-            file_path = ('/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/temp/pdf/arelpesquisainternetprecatorio.pdf')
-            bool = os.path.exists(file_path)
-            if bool == True:   
-                print()#Pula linha no terminal    
-                print('Excluindo PDF !')
-                os.remove(file_path)
-                print('PDF excluido !')
-                print()#Pula linha no terminal
-            else:        
-                print()#Pula linha no terminal
-                print("Não há PDF para ser exluido !")
-                print()#Pula linha no terminal
-        except:
-            pass    
+        R = Remove_pdf()
             
         self.join_tjsp()
         
@@ -94,7 +64,7 @@ class Main:
                 print(error, "FUNC_1")
         buttom_join.click()
         
-        send_year = input('Digite o ano desejado para coletar os dados: ')
+        # send_year = input('Digite o ano desejado para coletar os dados: ')
         time.sleep(0.2)
         exit_send_input = True
         while exit_send_input:
@@ -108,7 +78,7 @@ class Main:
             except Exception as error:
                 print(error, "FUNC_2")
         time.sleep(0.5)        
-        year_id.send_keys(send_year)
+        year_id.send_keys('2015')
         print()#Pula linha no terminal
                         
         self.down_img()
@@ -122,7 +92,7 @@ class Main:
             
             print('Iniciando download (CAPTCHA) !')
             r = requests.get(img_url)
-            self.__img = '/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/temp/img_captcha/img_captcha.jpg'
+            self.__img = '/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/img_captcha.jpg'
             with open(self.__img, 'wb') as out_file:
                 out_file.write(r.content)
             print('Download completo (CAPTCHA) !')
@@ -141,7 +111,7 @@ class Main:
         cv2.imwrite(filename, gray)
         self.__text = ocr.image_to_string(gray, lang = 'eng')
         os.remove(filename)        
-        
+                
         self.join_table()
     
     def join_table(self):  
@@ -173,9 +143,7 @@ class Main:
             EC.presence_of_element_located((By.XPATH, "//span[contains(text(),'Código digitado incorretamente!')]"))
         )
             span_one_txt = span_one.get_attribute('align')
-            print()#Pula linha no terminal
             print("ERRO: INVALID OCR")
-            print()#Pula linha no terminal
             
             #Caso der erro no OCR, executa esta função até passar
             while not (span_one_txt == False):
@@ -205,7 +173,7 @@ class Main:
         self.web_scraping()
         
     def web_scraping(self):
-        
+                
         url = self.__driver.current_url
         response = requests.get(url)
         
@@ -247,41 +215,20 @@ class Main:
                         buttom = self.__driver.find_element_by_xpath("//span[@class='PagingButtonsNext']")
                         buttom.click() 
                         self.web_scraping()
-            except Exception as error:
-                print(error, "FUNC_9")
+            except:
+                pass
         else:
             self.__driver.quit()
-            return Main()
+            return Extract_data_tjsp()
+        
         print()#Pula linha no terminal
         print("Fim da extração de dados dos PDF's !")
 
     def extract_pdf(self):
         
-        pdf_file= ("/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/temp/pdf/arelpesquisainternetprecatorio.pdf")
-            
-        try:
-            with open(pdf_file, "rb") as f:
-                pdf = pdftotext.PDF(f)
-
-            for page in pdf:
-                page_split = page.split('\n')
-                string_line_tree = (page_split[3].strip()) #Credor Principal
-                string_line_four = (page_split[4].strip()) #Número e Ano do EP
-                string_line_six = (page_split[6].strip()) #Número do Processo Originário
-                string_line_seven = (page_split[7].strip()) #Ordem Cronológica/Ano
-                print()#Pula linha no terminal
-                print(string_line_tree)
-                print(string_line_four)
-                print(string_line_six)
-                print(string_line_seven)
-                print()#Pula linha no terminal
-                print()#Pula linha no terminal                            
-        except Exception as error:
-            print(error)
-                
-        os.remove(pdf_file)
+        E = Extract_pdf()
                     
 try:#FUNC_14
-    Main()
+    Extract_data_tjsp()
 except Exception as error:
     print(error, "FUNC_14")

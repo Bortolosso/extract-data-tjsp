@@ -1,8 +1,9 @@
+#!/usr/bin/python -tt
 # coding: utf-8
 
 from selenium import webdriver
 
-class Driver(object):
+class Driver:
     
     def __init__(self):
         
@@ -19,5 +20,5 @@ class Driver(object):
         })
         
         self.__driver = webdriver.Chrome( options=options, executable_path = local_dir_driver)
-        self.__driver.get(url_tjsp) 
+        self.__driver.get(url_tjsp)
          
