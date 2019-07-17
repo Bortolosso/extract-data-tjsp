@@ -227,8 +227,5 @@ class Extract_data_tjsp:
     def extract_pdf(self):
         
         E = Extract_pdf()
-                    
-try:#FUNC_14
-    Extract_data_tjsp()
-except Exception as error:
-    print(error, "FUNC_14")
+
+Extract_data_tjsp()

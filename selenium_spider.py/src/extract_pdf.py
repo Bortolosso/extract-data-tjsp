@@ -13,18 +13,26 @@ class Extract_pdf:
         with open(pdf_file, "rb") as f:
             pdf = pdftotext.PDF(f)
 
-        for line in pdf:
-            page_split = line.split('\n')
+        for name in pdf:
+            page = name.split('\n')
             
-            line_tree = (page_split[3].strip()) #Credor Principal
-            line_four = (page_split[4].strip()) #Número e Ano do EP
-            line_six = (page_split[6].strip()) #Número do Processo Originário
-            line_seven = (page_split[7].strip()) #Ordem Cronológica/Ano
+            line_tree = page[3].split(':')#Credor Principal
+            str_tree = line_tree[1].strip()
+            
+            line_four = (page[4].split(':'))#Número e Ano do EP
+            str_four = line_four[1].strip()
+            
+            line_six = page[6].split(':')#Número do Processo Originário
+            str_six = line_six[1].strip()
+            
+            line_seven = (page[7].split(':')) #Ordem Cronológica/Ano
+            str_seven = line_seven[1].strip()
+            
             print()#Pula linha no terminal
-            print(line_tree)
-            print(line_four)
-            print(line_six)
-            print(line_seven)
+            print(str_tree)
+            print(str_four)
+            print(str_six)
+            print(str_seven)
             print()#Pula linha no terminal
-                                    
+    
         os.remove(pdf_file)
