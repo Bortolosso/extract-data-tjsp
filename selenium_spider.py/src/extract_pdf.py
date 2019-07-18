@@ -34,5 +34,14 @@ class Extract_pdf:
             print(str_six)
             print(str_seven)
             print()#Pula linha no terminal
+
+        directoryPath = ('/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/format_pdf/' + str_six)
+        os.mkdir(directoryPath)
+        
+        newPath = (directoryPath + '/precatorio.pdf')
+        os.rename(pdf_file, newPath)
     
         os.remove(pdf_file)
+        
+        
+

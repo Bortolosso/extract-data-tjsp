@@ -6,7 +6,6 @@ class Test_script:
         
         self.script_animation_one()
     
-    
     def script_animation_one(self):
         
         animation = ("|/-\\")
