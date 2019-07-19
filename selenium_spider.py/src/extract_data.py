@@ -194,7 +194,7 @@ class Extract_data_tjsp:
                             cols_table = self.__driver.find_element_by_xpath(table_xpath)
                             
                             for x in range(len(cols)):
-                                time.sleep(0.3)
+                                time.sleep(0.1)
                                 if x == 0:
                                     continue 
                                 try:#FUNC_11 // #Função responsavel abrir PDF Viewer e fecha-lo, reduzindo o consumo de memoria volatil
@@ -220,12 +220,12 @@ class Extract_data_tjsp:
         else:
             self.__driver.quit()
             return Extract_data_tjsp()
-        
-        print()#Pula linha no terminal
-        print("Fim da extração de dados dos PDF's !")
 
     def extract_pdf(self):
         
         E = Extract_pdf()
+        
+        print()#Pula linha no terminal
+        print("Fim da extração de dados dos PDF's !")
 
 Extract_data_tjsp()

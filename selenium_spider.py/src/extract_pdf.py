@@ -28,20 +28,27 @@ class Extract_pdf:
             line_seven = (page[7].split(':')) #Ordem Cronológica/Ano
             str_seven = line_seven[1].strip()
             
-            print()#Pula linha no terminal
-            print(str_tree)
-            print(str_four)
-            print(str_six)
-            print(str_seven)
-            print()#Pula linha no terminal
+        print()#Pula linha no terminal
+        print(str_tree)
+        print(str_four)
+        print(str_six)
+        print(str_seven)
+        print()#Pula linha no terminal
 
         directoryPath = ('/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/format_pdf/' + str_six)
         os.mkdir(directoryPath)
         
         newPath = (directoryPath + '/precatorio.pdf')
         os.rename(pdf_file, newPath)
-    
-        os.remove(pdf_file)
         
+        # if directoryPath == str_six:
+        #     print('True !')
+        
+        '''
+            FAZER ALGORITIMO QUE VERIFIQUE SE HA PASTA COM O MESMO NUMERO DE PROCESSO, PARA EVITAR CONFLITOS !
+        '''
+        
+
+        os.remove(pdf_file)
         
 
