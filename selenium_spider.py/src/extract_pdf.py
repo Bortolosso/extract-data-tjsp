@@ -8,9 +8,9 @@ class Extract_pdf:
     
     def __init__(self):
         
-        pdf_file= ("/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/temp/pdf/arelpesquisainternetprecatorio.pdf")
+        temp_pdf = ("/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/temp/pdf/arelpesquisainternetprecatorio.pdf")
             
-        with open(pdf_file, "rb") as f:
+        with open(temp_pdf, "rb") as f:
             pdf = pdftotext.PDF(f)
 
         for name in pdf:
@@ -28,27 +28,20 @@ class Extract_pdf:
             line_seven = (page[7].split(':')) #Ordem Cronológica/Ano
             str_seven = line_seven[1].strip()
             
+            concat_str = (str_tree + '\n' + str_four + '\n' + str_six + '\n' + str_seven)
+            
         print()#Pula linha no terminal
-        print(str_tree)
-        print(str_four)
-        print(str_six)
-        print(str_seven)
+        print(concat_str)
         print()#Pula linha no terminal
 
         directoryPath = ('/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/format_pdf/' + str_six)
-        os.mkdir(directoryPath)
-        
+        alternative_name = (directoryPath + '1')
         newPath = (directoryPath + '/precatorio.pdf')
-        os.rename(pdf_file, newPath)
         
-        # if directoryPath == str_six:
-        #     print('True !')
-        
-        '''
-            FAZER ALGORITIMO QUE VERIFIQUE SE HA PASTA COM O MESMO NUMERO DE PROCESSO, PARA EVITAR CONFLITOS !
-        '''
-        
-
-        os.remove(pdf_file)
-        
-
+        try:
+            os.mkdir(directoryPath)
+            os.rename(temp_pdf, newPath)
+            os.remove(temp_pdf)
+        except:
+            os.remove(temp_pdf)
+    

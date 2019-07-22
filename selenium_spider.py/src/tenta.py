@@ -1,6 +1,9 @@
 import os.path
+import os
 
-file_path = '/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/format_pdf/0402638-84.1997.8.26.0055'
+file_path = '/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/format_pdf/0000182-15.2001.8.26.0272/precatorio.pdf'
 
-print(os.path.exists(file_path))
+validate = os.path.exists(file_path)
+
+print(validate)
 
