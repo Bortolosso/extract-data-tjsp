@@ -4,7 +4,7 @@
 import pdftotext
 import os
 
-class Extract_pdf:
+class Extract_Pdf:
     
     def __init__(self):
         
@@ -30,14 +30,13 @@ class Extract_pdf:
             
             concat_str = (str_tree + '\n' + str_four + '\n' + str_six + '\n' + str_seven)
             
-        print()#Pula linha no terminal
-        print(concat_str)
-        print()#Pula linha no terminal
+        print('\n', concat_str, '\n')
 
-        directoryPath = ('/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/format_pdf/' + str_six)
-        alternative_name = (directoryPath + '1')
-        newPath = (directoryPath + '/precatorio.pdf')
-        
+        try:
+            directoryPath = ('/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/format_pdf/' + str_six)
+            newPath = (directoryPath + '/precatorio.pdf')
+        except:
+            pass
         try:
             os.mkdir(directoryPath)
             os.rename(temp_pdf, newPath)

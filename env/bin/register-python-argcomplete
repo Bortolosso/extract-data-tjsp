@@ -16,16 +16,38 @@ Example:
 For Tcsh
 
     $ eval `register-python-argcomplete --shell tcsh my-favorite-script.py`
-
-For Fish
-
-    $ register-python-argcomplete --shell fish my-favourite-script.py > ~/.config/fish/my-favourite-script.py.fish
 '''
 
 import sys
 import argparse
-import argcomplete
 
+shellcode = r'''
+_python_argcomplete() {
+    local IFS=$'\013'
+    local SUPPRESS_SPACE=0
+    if compopt +o nospace 2> /dev/null; then
+        SUPPRESS_SPACE=1
+    fi
+    COMPREPLY=( $(IFS="$IFS" \
+                  COMP_LINE="$COMP_LINE" \
+                  COMP_POINT="$COMP_POINT" \
+                  COMP_TYPE="$COMP_TYPE" \
+                  _ARGCOMPLETE_COMP_WORDBREAKS="$COMP_WORDBREAKS" \
+                  _ARGCOMPLETE=1 \
+                  _ARGCOMPLETE_SUPPRESS_SPACE=$SUPPRESS_SPACE \
+                  "$1" 8>&1 9>&2 1>/dev/null 2>/dev/null) )
+    if [[ $? != 0 ]]; then
+        unset COMPREPLY
+    elif [[ $SUPPRESS_SPACE == 1 ]] && [[ "$COMPREPLY" =~ [=/:]$ ]]; then
+        compopt -o nospace
+    fi
+}
+complete %(complete_opts)s -F _python_argcomplete "%(executable)s"
+'''
+
+tcshcode = '''\
+complete "%(executable)s" 'p@*@`python-argcomplete-tcsh "%(executable)s"`@'
+'''
 
 parser = argparse.ArgumentParser(
     description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -40,15 +62,12 @@ parser.add_argument(
     help='arguments to call complete with; use of this option discards default options')
 parser.add_argument(
     '-s', '--shell',
-    choices=('bash', 'tcsh', 'fish'), default='bash',
+    choices=('bash', 'tcsh'), default='bash',
     help='output code for the specified shell')
 
 parser.add_argument(
     'executable',
-    nargs='+',
     help='executable to completed (when invoked by exactly this name)')
-
-argcomplete.autocomplete(parser)
 
 if len(sys.argv) == 1:
     parser.print_help()
@@ -56,6 +75,17 @@ if len(sys.argv) == 1:
 
 args = parser.parse_args()
 
+if args.complete_arguments is None:
+    complete_options = '-o nospace -o default' if args.use_defaults else '-o nospace'
+else:
+    complete_options = " ".join(args.complete_arguments)
 
-sys.stdout.write(argcomplete.shellcode(
-    args.executable, args.use_defaults, args.shell, args.complete_arguments))
+if args.shell == 'bash':
+    code = shellcode
+else:
+    code = tcshcode
+
+sys.stdout.write(code % dict(
+    complete_opts=complete_options,
+    executable=args.executable
+))

@@ -1,9 +1,10 @@
 #!/usr/bin/python -tt
 # coding: utf-8
 
-from extract_pdf import Extract_pdf
-from remove_pdf import Remove_pdf 
-from load_terminal import Load_script
+from extract_pdf import Extract_Pdf
+from remove_pdf import Remove_Pdf 
+from color_terminal import printer
+from constants import Constants
 
 from PIL import Image, ImageOps, ImageEnhance
 
@@ -18,21 +19,18 @@ import time
 import requests
 import os
 
+CONS = Constants()
+p = printer()
+
 class Extract_data_tjsp:
         
     def __init__(self):
-                
-        L = Load_script()
-        
-        self.driver()
-
-    def driver(self):
         
         local_dir_pdf = "/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/temp/pdf"
         local_dir_driver = "/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/driver/chromedriver75"
-        url_tjsp = "https://www.tjsp.jus.br/cac/scp/webmenupesquisa.aspx"
         
         options = webdriver.ChromeOptions()
+        # options.add_argument("--headless")
         options.add_experimental_option('prefs', {
         "download.default_directory": local_dir_pdf, #Alterar diretório padrão para downloads
         "download.prompt_for_download": False, #Para baixar automaticamente o arquivo
@@ -41,13 +39,13 @@ class Extract_data_tjsp:
         })
         
         self.__driver = webdriver.Chrome( options=options, executable_path = local_dir_driver)
-        self.__driver.get(url_tjsp)
-        
+        self.__driver.get(CONS.CAC_SCP.SP.URL)
+                
         self.remove_pdf()
         
     def remove_pdf(self): 
 
-        R = Remove_pdf()
+        R = Remove_Pdf()
             
         self.join_tjsp()
         
@@ -56,15 +54,16 @@ class Extract_data_tjsp:
         exit_click_link = True
         while exit_click_link:
             try:#FUNC_1 // #Clicar botão linkado 'Precatórios'
-                buttom_join = WebDriverWait(self.__driver, 10).until(
+                buttom_join = WebDriverWait(self.__driver, 2).until(
                     EC.presence_of_element_located((By.ID, "TXTITEM1"))
                 )
                 exit_click_link = False
             except Exception as error:
-                print(error, "FUNC_1")
+                p.print(msg="FUNC_1", color="RED")
+                print(error)
         buttom_join.click()
         
-        # send_year = input('Digite o ano desejado para coletar os dados: ')
+        send_year = input('Digite o ano desejado para coleta de dados: ')
         time.sleep(0.2)
         exit_send_input = True
         while exit_send_input:
@@ -76,10 +75,10 @@ class Extract_data_tjsp:
                 )
                 exit_send_input = False
             except Exception as error:
-                print(error, "FUNC_2")
+                p.print(msg="Error FUNC_2", color="RED")
+                print(error)
         time.sleep(0.5)        
-        year_id.send_keys('2015')
-        print()#Pula linha no terminal
+        year_id.send_keys(send_year)
                         
         self.down_img()
   
@@ -90,14 +89,15 @@ class Extract_data_tjsp:
             div_captcha = self.__driver.find_element_by_xpath(url_cap)
             img_url = div_captcha.get_attribute('src')
             
-            print('Iniciando download (CAPTCHA) !')
+            p.print(msg="\nIniciando download (CAPTCHA) !", color="YELLOW")
             r = requests.get(img_url)
             self.__img = '/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/img_captcha.jpg'
             with open(self.__img, 'wb') as out_file:
                 out_file.write(r.content)
-            print('Download completo (CAPTCHA) !')
+            p.print(msg="Download completo (CAPTCHA) !", color="GREEN")
         except Exception as error:
-            print(error, "FUNC_3")
+            p.print(msg="Error FUNC_3", color="RED")
+            print(error)
         
         self.ocr_img()
 
@@ -124,7 +124,8 @@ class Extract_data_tjsp:
             )
                 exit_send_key = False
             except Exception as error:
-                print(error, "FUNC_4")
+                p.print(msg="Error FUNC_4", color="RED")
+                print(error)
             elem.send_keys(self.__text)
             
         exit_click_buttom = True
@@ -135,7 +136,8 @@ class Extract_data_tjsp:
                 )
                 exit_click_buttom = False
             except Exception as error:
-                print(error, "FUNC_5")
+                p.print(msg="Error FUNC_5", color="RED")
+                print(error)
             click_buttom.click(), time.sleep(0.3)
             
         try:#FUNC_6 // #Mensagem de erro no OCR 
@@ -143,8 +145,8 @@ class Extract_data_tjsp:
             EC.presence_of_element_located((By.XPATH, "//span[contains(text(),'Código digitado incorretamente!')]"))
         )
             span_one_txt = span_one.get_attribute('align')
-            print("ERRO: INVALID OCR")
-            
+            p.print(msg="ERRO: INVALID OCR", color="RED")
+                        
             #Caso der erro no OCR, executa esta função até passar
             while not (span_one_txt == False):
                 try:#FUNC_7 // #Limpa Span
@@ -153,7 +155,9 @@ class Extract_data_tjsp:
                     EC.presence_of_element_located((By.XPATH, clear_span))
                     )
                 except Exception as error:
-                    print(error, "FUNC_7")
+                    p.print(msg="FUNC_7", color="RED")
+                    print(error)
+                    
                 click_buttom_clear.click()
                             
                 try:#FUNC_8 // #Clica no botão nova imagem
@@ -162,7 +166,8 @@ class Extract_data_tjsp:
                     EC.presence_of_element_located((By.XPATH, buttom_new))
                     )
                 except Exception as error:
-                    print(error, "FUNC_8")
+                    p.print(msg="FUNC_8", color="RED")
+                    print(error)
                 click_buttom_new_img.click()
                 
                 self.down_img(), time.sleep(0.3)
@@ -178,13 +183,13 @@ class Extract_data_tjsp:
         response = requests.get(url)
         
         if response != 200:
-            print()#Pula linha no terminal
-            print("Inicinado download dos PDF's !")
+            p.print(msg="\nIniciando download dos PDF's !", color="YELLOW")
             try:#FUNC_9
                 rows = WebDriverWait(self.__driver, 10).until(
                     EC.presence_of_all_elements_located((By.XPATH, "//table[@id='Grid1ContainerTbl']/tbody[1]/tr[*]"))
                 )
                 for i in range(2, len(rows) + 1):
+                    time.sleep(0.8)
                     if i < 22:
                         try:#FUNC_10
                             row_xpath = "//table[@id='Grid1ContainerTbl']/tbody[1]/tr[%s]/td[*]/span[1]" % (int(i))
@@ -223,9 +228,6 @@ class Extract_data_tjsp:
 
     def extract_pdf(self):
         
-        E = Extract_pdf()
+        E = Extract_Pdf()
         
-        print()#Pula linha no terminal
-        print("Fim da extração de dados dos PDF's !")
-
 Extract_data_tjsp()

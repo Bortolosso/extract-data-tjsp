@@ -1,9 +1,13 @@
 #!/usr/bin/python -tt
 # coding: utf-8
 
+from color_terminal import printer
+
 import os
 
-class Remove_pdf:
+p = printer()
+
+class Remove_Pdf:
         
     def __init__(self):
     
@@ -11,14 +15,10 @@ class Remove_pdf:
             file_path = ('/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/temp/pdf/arelpesquisainternetprecatorio.pdf')
             bool = os.path.exists(file_path)
             if bool == True:   
-                print()#Pula linha no terminal    
-                print('Excluindo PDF !')
+                p.print(msg="\nExcluindo PDF !", color="YELLOW")  
                 os.remove(file_path)
-                print('PDF excluido !')
-                print()#Pula linha no terminal
+                p.print(msg="\nPDF excluido !", color="GREEN")
             else:        
-                print()#Pula linha no terminal
-                print("Não há PDF para ser exluido !")
-                print()#Pula linha no terminal
+                p.print(msg="\nNão há PDF para ser exluido !\n", color="GREEN")
         except:
             pass
