@@ -1,11 +1,6 @@
 #!/usr/bin/python -tt
 # coding: utf-8
 
-from extract_pdf import Extract_Pdf
-from remove_pdf import Remove_Pdf 
-from color_terminal import printer
-from constants import Constants
-
 from PIL import Image, ImageOps, ImageEnhance
 
 from selenium import webdriver
@@ -19,6 +14,11 @@ import time
 import requests
 import os
 
+from extract_pdf import Extract_Pdf
+from remove_pdf import Remove_Pdf 
+from color_terminal import printer
+from constants import Constants
+
 CONS = Constants()
 p = printer()
 
@@ -26,19 +26,16 @@ class Extract_data_tjsp:
         
     def __init__(self):
         
-        local_dir_pdf = "/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/temp/pdf"
-        local_dir_driver = "/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/driver/chromedriver75"
-        
         options = webdriver.ChromeOptions()
         # options.add_argument("--headless")
         options.add_experimental_option('prefs', {
-        "download.default_directory": local_dir_pdf, #Alterar diretório padrão para downloads
+        "download.default_directory": CONS.VALUE.PATH_PDF, #Alterar diretório padrão para downloads
         "download.prompt_for_download": False, #Para baixar automaticamente o arquivo
         "download.directory_upgrade": True,
         "plugins.always_open_pdf_externally": True, #Não mostrará PDF diretamente no chrome
         })
         
-        self.__driver = webdriver.Chrome( options=options, executable_path = local_dir_driver)
+        self.__driver = webdriver.Chrome(options=options, executable_path = CONS.VALUE.PATH_DRIVER)
         self.__driver.get(CONS.CAC_SCP.SP.URL)
                 
         self.remove_pdf()
@@ -55,7 +52,7 @@ class Extract_data_tjsp:
         while exit_click_link:
             try:#FUNC_1 // #Clicar botão linkado 'Precatórios'
                 buttom_join = WebDriverWait(self.__driver, 2).until(
-                    EC.presence_of_element_located((By.ID, "TXTITEM1"))
+                    EC.presence_of_element_located((By.XPATH, CONS.LOCAL_WEB.XPATH.BUTTOM_PRECA))
                 )
                 exit_click_link = False
             except Exception as error:
@@ -63,36 +60,32 @@ class Extract_data_tjsp:
                 print(error)
         buttom_join.click()
         
-        send_year = input('Digite o ano desejado para coleta de dados: ')
+        # send_year = input('Digite o ano desejado para coleta de dados: ')
         time.sleep(0.2)
         exit_send_input = True
         while exit_send_input:
             try:#FUNC_2 // #Coloca valor '2015' na box
-                xpath_iput = "/html[1]/body[1]/form[1]/table[1]/tbody[1]/tr[3]/td[1]/table[1]/tbody[1]/tr[1]/td[1]/table[1]/tbody[1]/tr[2]/td[1]/table[1]/tbody[1]/tr[4]/td[2]/table[1]/tbody[1]/tr[1]/td[3]/input[1]"
-                send_input = xpath_iput
                 year_id = WebDriverWait(self.__driver, 10).until(
-                    EC.visibility_of_element_located((By.XPATH, send_input))
+                    EC.visibility_of_element_located((By.XPATH, CONS.LOCAL_WEB.XPATH.SEND_INPUT))
                 )
                 exit_send_input = False
             except Exception as error:
                 p.print(msg="Error FUNC_2", color="RED")
                 print(error)
         time.sleep(0.5)        
-        year_id.send_keys(send_year)
+        year_id.send_keys('2015')
                         
         self.down_img()
   
     def down_img(self): #Função responsavel para o download da imagem do captcha
         
         try:#FUNC_3 // #Trás URL do  captcha gerado 
-            url_cap = "/html[1]/body[1]/form[1]/table[1]/tbody[1]/tr[3]/td[1]/table[1]/tbody[1]/tr[1]/td[1]/table[1]/tbody[1]/tr[5]/td[1]/table[1]/tbody[1]/tr[1]/td[2]/div[1]/div[1]/img[1]"
-            div_captcha = self.__driver.find_element_by_xpath(url_cap)
+            div_captcha = self.__driver.find_element_by_xpath(CONS.LOCAL_WEB.XPATH.URL_CAP)
             img_url = div_captcha.get_attribute('src')
             
             p.print(msg="\nIniciando download (CAPTCHA) !", color="YELLOW")
             r = requests.get(img_url)
-            self.__img = '/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/img_captcha.jpg'
-            with open(self.__img, 'wb') as out_file:
+            with open(CONS.VALUE.PATH_TEMP_CAPTCHA, 'wb') as out_file:
                 out_file.write(r.content)
             p.print(msg="Download completo (CAPTCHA) !", color="GREEN")
         except Exception as error:
@@ -103,11 +96,11 @@ class Extract_data_tjsp:
 
     def ocr_img(self): #Função responsavel de processamento OCR(retirar string de imagem)
         
-        path = (self.__img).strip()
+        path = (CONS.VALUE.PATH_TEMP_CAPTCHA).strip()
         image = cv2.imread(path)
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         
-        filename = '/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/img_captcha.jpg'.format('temp')
+        filename = CONS.VALUE.PATH_TEMP_CAPTCHA.format('temp')
         cv2.imwrite(filename, gray)
         self.__text = ocr.image_to_string(gray, lang = 'eng')
         os.remove(filename)        
@@ -142,7 +135,7 @@ class Extract_data_tjsp:
             
         try:#FUNC_6 // #Mensagem de erro no OCR 
             span_one = WebDriverWait(self.__driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//span[contains(text(),'Código digitado incorretamente!')]"))
+            EC.presence_of_element_located((By.XPATH, CONS.LOCAL_WEB.XPATH.ERRO))
         )
             span_one_txt = span_one.get_attribute('align')
             p.print(msg="ERRO: INVALID OCR", color="RED")
@@ -150,9 +143,8 @@ class Extract_data_tjsp:
             #Caso der erro no OCR, executa esta função até passar
             while not (span_one_txt == False):
                 try:#FUNC_7 // #Limpa Span
-                    clear_span = "/html[1]/body[1]/form[1]/table[1]/tbody[1]/tr[3]/td[1]/table[1]/tbody[1]/tr[1]/td[1]/table[1]/tbody[1]/tr[7]/td[1]/table[1]/tbody[1]/tr[1]/td[2]/input[1]"
                     click_buttom_clear = WebDriverWait(self.__driver, 10).until(
-                    EC.presence_of_element_located((By.XPATH, clear_span))
+                    EC.presence_of_element_located((By.XPATH, CONS.LOCAL_WEB.XPATH.ERRO_CAPTCHA))
                     )
                 except Exception as error:
                     p.print(msg="FUNC_7", color="RED")
@@ -161,9 +153,8 @@ class Extract_data_tjsp:
                 click_buttom_clear.click()
                             
                 try:#FUNC_8 // #Clica no botão nova imagem
-                    buttom_new = "/html[1]/body[1]/form[1]/table[1]/tbody[1]/tr[3]/td[1]/table[1]/tbody[1]/tr[1]/td[1]/table[1]/tbody[1]/tr[5]/td[1]/table[1]/tbody[1]/tr[1]/td[2]/div[1]/div[1]/a[1]"
                     click_buttom_new_img = WebDriverWait(self.__driver, 10).until(
-                    EC.presence_of_element_located((By.XPATH, buttom_new))
+                    EC.presence_of_element_located((By.XPATH, CONS.LOCAL_WEB.XPATH.NEW_CAPTCHA))
                     )
                 except Exception as error:
                     p.print(msg="FUNC_8", color="RED")
@@ -186,7 +177,7 @@ class Extract_data_tjsp:
             p.print(msg="\nIniciando download dos PDF's !", color="YELLOW")
             try:#FUNC_9
                 rows = WebDriverWait(self.__driver, 10).until(
-                    EC.presence_of_all_elements_located((By.XPATH, "//table[@id='Grid1ContainerTbl']/tbody[1]/tr[*]"))
+                    EC.presence_of_all_elements_located((By.XPATH, CONS.LOCAL_WEB.XPATH.ROWS_TABLE))
                 )
                 for i in range(2, len(rows) + 1):
                     time.sleep(0.8)
@@ -217,7 +208,7 @@ class Extract_data_tjsp:
                         except Exception as error:
                             print(error)
                     else:
-                        buttom = self.__driver.find_element_by_xpath("//span[@class='PagingButtonsNext']")
+                        buttom = self.__driver.find_element_by_xpath(CONS.LOCAL_WEB.XPATH.NEXT_TABLE)
                         buttom.click() 
                         self.web_scraping()
             except:

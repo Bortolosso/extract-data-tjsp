@@ -4,11 +4,15 @@
 import pdftotext
 import os
 
+from constants import Constants
+
+CONS = Constants()
+
 class Extract_Pdf:
     
     def __init__(self):
         
-        temp_pdf = ("/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/temp/pdf/arelpesquisainternetprecatorio.pdf")
+        temp_pdf = CONS.VALUE.TEMP_PDF
             
         with open(temp_pdf, "rb") as f:
             pdf = pdftotext.PDF(f)
@@ -33,7 +37,7 @@ class Extract_Pdf:
         print('\n', concat_str, '\n')
 
         try:
-            directoryPath = ('/home/bortolossohurst/Documents/ambv_boot/selenium_spider.py/format_pdf/' + str_six)
+            directoryPath = (CONS.VALUE.DIRECTORY_PATH + str_six)
             newPath = (directoryPath + '/precatorio.pdf')
         except:
             pass
@@ -43,4 +47,3 @@ class Extract_Pdf:
             os.remove(temp_pdf)
         except:
             os.remove(temp_pdf)
-    
