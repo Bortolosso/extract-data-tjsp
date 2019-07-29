@@ -32,7 +32,7 @@ class Extract_data_tjsp:
         "download.default_directory": CONS.VALUE.PATH_PDF, #Alterar diretório padrão para downloads
         "download.prompt_for_download": False, #Para baixar automaticamente o arquivo
         "download.directory_upgrade": True,
-        "plugins.always_open_pdf_externally": True, #Não mostrará PDF diretamente no chrome
+        "plugins.always_open_pdf_externally": True #Não mostrará PDF diretamente no chrome
         })
         
         self.__driver = webdriver.Chrome(options=options, executable_path = CONS.VALUE.PATH_DRIVER)
@@ -51,7 +51,7 @@ class Extract_data_tjsp:
         exit_click_link = True
         while exit_click_link:
             try:#FUNC_1 // #Clicar botão linkado 'Precatórios'
-                buttom_join = WebDriverWait(self.__driver, 2).until(
+                buttom_join = WebDriverWait(self.__driver, 10).until(
                     EC.presence_of_element_located((By.XPATH, CONS.LOCAL_WEB.XPATH.BUTTOM_PRECA))
                 )
                 exit_click_link = False
@@ -73,7 +73,7 @@ class Extract_data_tjsp:
                 p.print(msg="Error FUNC_2", color="RED")
                 print(error)
         time.sleep(0.5)        
-        year_id.send_keys('2015')
+        year_id.send_keys('2004')
                         
         self.down_img()
   
@@ -96,7 +96,7 @@ class Extract_data_tjsp:
 
     def ocr_img(self): #Função responsavel de processamento OCR(retirar string de imagem)
         
-        path = (CONS.VALUE.PATH_TEMP_CAPTCHA).strip()
+        path = CONS.VALUE.PATH_TEMP_CAPTCHA.strip()
         image = cv2.imread(path)
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         

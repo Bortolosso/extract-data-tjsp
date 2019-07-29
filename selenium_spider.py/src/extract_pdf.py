@@ -3,6 +3,7 @@
 
 import pdftotext
 import os
+import re
 
 from constants import Constants
 
@@ -33,17 +34,30 @@ class Extract_Pdf:
             str_seven = line_seven[1].strip()
             
             concat_str = (str_tree + '\n' + str_four + '\n' + str_six + '\n' + str_seven)
-            
+                        
         print('\n', concat_str, '\n')
-
-        try:
-            directoryPath = (CONS.VALUE.DIRECTORY_PATH + str_six)
-            newPath = (directoryPath + '/precatorio.pdf')
-        except:
-            pass
-        try:
-            os.mkdir(directoryPath)
-            os.rename(temp_pdf, newPath)
-            os.remove(temp_pdf)
-        except:
-            os.remove(temp_pdf)
+        
+        if "/" in str_six:
+            try:
+                new_format = re.sub("/", ".", str_six)
+                
+                directoryPath_one = (CONS.VALUE.DIRECTORY_PATH + new_format)
+                os.mkdir(directoryPath_one)
+                
+                newPath = (directoryPath_one + '/precatorio.pdf')
+                os.rename(temp_pdf, newPath)
+                os.remove(temp_pdf)
+            except:
+                pass
+        
+        if not "/" in str_six:
+            try:
+                directoryPath_two = (CONS.VALUE.DIRECTORY_PATH + str_six)
+                os.mkdir(directoryPath_two)
+                
+                newPath = (directoryPath_two + '/precatorio.pdf')
+                os.rename(temp_pdf, newPath)
+                os.remove(temp_pdf)
+            except:
+                os.remove(temp_pdf)
+                
