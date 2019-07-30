@@ -180,7 +180,7 @@ class Extract_data_tjsp:
                     EC.presence_of_all_elements_located((By.XPATH, CONS.LOCAL_WEB.XPATH.ROWS_TABLE))
                 )
                 for i in range(2, len(rows) + 1):
-                    time.sleep(0.8)
+                    time.sleep(0.6)
                     if i < 22:
                         try:#FUNC_10
                             row_xpath = "//table[@id='Grid1ContainerTbl']/tbody[1]/tr[%s]/td[*]/span[1]" % (int(i))
@@ -190,7 +190,6 @@ class Extract_data_tjsp:
                             cols_table = self.__driver.find_element_by_xpath(table_xpath)
                             
                             for x in range(len(cols)):
-                                time.sleep(0.1)
                                 if x == 0:
                                     continue 
                                 try:#FUNC_11 // #Função responsavel abrir PDF Viewer e fecha-lo, reduzindo o consumo de memoria volatil
@@ -202,7 +201,8 @@ class Extract_data_tjsp:
                                     self.__driver.switch_to_window(window_after)
                                     self.__driver.close()
                                     self.__driver.switch_to_window(window_before)
-                                    self.extract_pdf()
+                                    E = Extract_Pdf()
+                                    time.sleep(0.8)
                                 except:
                                     pass
                         except Exception as error:
@@ -216,9 +216,5 @@ class Extract_data_tjsp:
         else:
             self.__driver.quit()
             return Extract_data_tjsp()
-
-    def extract_pdf(self):
-        
-        E = Extract_Pdf()
         
 Extract_data_tjsp()

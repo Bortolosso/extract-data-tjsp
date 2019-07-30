@@ -44,6 +44,10 @@ class Extract_Pdf:
                 directoryPath_one = (CONS.VALUE.DIRECTORY_PATH + new_format)
                 os.mkdir(directoryPath_one)
                 
+                concat_str_format = (str_tree + '\n' + str_four + '\n' + new_format + '\n' + str_seven)
+                        
+                print('\n', concat_str_format, '\n')
+                
                 newPath = (directoryPath_one + '/precatorio.pdf')
                 os.rename(temp_pdf, newPath)
                 os.remove(temp_pdf)
@@ -55,9 +59,12 @@ class Extract_Pdf:
                 directoryPath_two = (CONS.VALUE.DIRECTORY_PATH + str_six)
                 os.mkdir(directoryPath_two)
                 
+                concat_str = (str_tree + '\n' + str_four + '\n' + str_six + '\n' + str_seven)
+                        
+                print('\n', concat_str, '\n')
+                
                 newPath = (directoryPath_two + '/precatorio.pdf')
                 os.rename(temp_pdf, newPath)
                 os.remove(temp_pdf)
             except:
                 os.remove(temp_pdf)
-                
